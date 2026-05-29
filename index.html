@@ -430,7 +430,10 @@
 <div class="page" id="page-calendar">
   <div class="page-header">
     <div class="page-title">📅 캘린더</div>
-    <button class="btn btn-primary btn-sm" onclick="openAddRecord()">+ 기록</button>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-primary btn-sm" onclick="openAddRecord()">+ 티켓</button>
+      <button class="btn btn-outline btn-sm" onclick="openAddEventRecord()">+ 이벤트</button>
+    </div>
   </div>
   <!-- 배우 필터 -->
   <div class="cal-filter">
@@ -462,6 +465,21 @@
       </div>
     </div>
     <div id="cal-filter-hint" style="font-size:11px;color:var(--text3);padding:2px 0 4px;">· 전체 회차 표시 중</div>
+    <div class="cal-filter-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:6px;">
+      <span class="cal-filter-label">공연 보기</span>
+      <div style="display:flex;gap:6px;">
+        <button class="cal-chip active" id="cal-view-btn-all" onclick="setCalViewMode('all',this)">전체 공연</button>
+        <button class="cal-chip" id="cal-view-btn-mine" onclick="setCalViewMode('mine',this)">내 관람</button>
+      </div>
+    </div>
+    <div class="cal-filter-row">
+      <span class="cal-filter-label">이벤트</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="cal-chip active" data-ef="all" onclick="setCalEventFilter('all',this)">전체</button>
+        <button class="cal-chip" data-ef="confirmed" onclick="setCalEventFilter('confirmed',this)">공지</button>
+        <button class="cal-chip" data-ef="predicted" onclick="setCalEventFilter('predicted',this)">예측</button>
+      </div>
+    </div>
   </div>
   <div class="card" style="padding:12px;">
     <div class="cal-nav">
@@ -696,6 +714,8 @@
         <option value="">없음 (일반)</option>
         <option value="discount40">40% 할인권</option>
         <option value="discount50">현장예매 50% 할인권</option>
+        <option value="preview">프리뷰 할인</option>
+        <option value="revisit20">재관람 할인 20%</option>
       </select>
       <div id="rec-discount-warn" style="display:none;margin-top:6px;font-size:12px;color:var(--danger);">⚠ 현재 보유한 쿠폰이 없습니다</div>
     </div>
@@ -709,19 +729,25 @@
       <label class="form-label">추가 쿠폰 <span style="color:var(--text3);font-weight:400;">(중복 선택 가능)</span></label>
       <div style="display:flex;gap:16px;flex-wrap:wrap;">
         <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;color:var(--text2);">
-          <input type="checkbox" id="rec-coupon1000" style="width:16px;height:16px;accent-color:var(--accent);">
+          <input type="checkbox" id="rec-coupon1000" onchange="calcAutoPrice()" style="width:16px;height:16px;accent-color:var(--accent);">
           만원 쿠폰
         </label>
         <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;color:var(--text2);">
-          <input type="checkbox" id="rec-coupon-naver" style="width:16px;height:16px;accent-color:var(--accent);">
+          <input type="checkbox" id="rec-coupon-naver" onchange="calcAutoPrice()" style="width:16px;height:16px;accent-color:var(--accent);">
           네이버 쿠폰
         </label>
       </div>
     </div>
 
     <div class="form-group">
-      <label class="form-label">티켓 가격 (원)</label>
-      <input type="number" class="form-control" id="rec-price" placeholder="예: 45000">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+        <label class="form-label" style="margin:0;">티켓 가격 (원)</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;">
+          <input type="checkbox" id="rec-price-manual" onchange="toggleManualPrice()" style="width:14px;height:14px;accent-color:var(--accent);">
+          직접 입력
+        </label>
+      </div>
+      <input type="number" class="form-control" id="rec-price" placeholder="좌석 선택 시 자동 계산" readonly style="background:var(--bg3);">
     </div>
 
     <div class="form-group">
@@ -912,6 +938,36 @@
   </div>
 </div>
 
+<!-- ===== EVENT RECORD PANEL ===== -->
+<div class="overlay" id="overlay-event-record">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="flex-between" style="margin-bottom:20px;">
+      <div class="panel-title" id="event-record-panel-title">이벤트 기록 추가</div>
+      <button class="btn-icon" onclick="closePanel('overlay-event-record')">✕</button>
+    </div>
+    <input type="hidden" id="edit-event-record-id">
+    <div class="form-group">
+      <label class="form-label">이벤트명 *</label>
+      <input type="text" class="form-control" id="event-rec-name" placeholder="예: 1주차 특전 증정">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">시작일 *</label>
+        <input type="date" class="form-control" id="event-rec-start">
+      </div>
+      <div class="form-group">
+        <label class="form-label">종료일 *</label>
+        <input type="date" class="form-control" id="event-rec-end">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveEventRecord()">저장</button>
+      <button class="btn btn-outline" onclick="closePanel('overlay-event-record')">취소</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== ADD COUPON MANUAL PANEL ===== -->
 <div class="overlay" id="overlay-coupon-manual">
   <div class="panel">
@@ -981,8 +1037,19 @@ function getRecords()      { return DB.get('records', []); }
 function saveRecords(r)    { DB.set('records', r); }
 function getSchedule()     { return DB.get('schedule', []); }
 function saveSchedule(s)   { DB.set('schedule', s); }
-function getEvents() { return DB.get('events', []); }
-function saveEvents(ev)    { DB.set('events', ev); }
+function getEventsConfirmed() { return DB.get('events_confirmed', []); }
+function saveEventsConfirmed(ev) { DB.set('events_confirmed', ev); }
+function getEventsPredicted() { return DB.get('events_predicted', []); }
+function saveEventsPredicted(ev) { DB.set('events_predicted', ev); }
+function getMyEventRecords() { return DB.get('event_records', []); }
+function saveMyEventRecords(r) { DB.set('event_records', r); }
+function getEvents() {
+  const confirmed = getEventsConfirmed().map(e => ({...e, eventType:'confirmed', color: e.color||'#2B7CC4'}));
+  const predicted = getEventsPredicted().map(e => ({...e, eventType:'predicted', color: e.color||'#E8901A'}));
+  const personal  = getMyEventRecords().map(e => ({startDate:e.startDate, endDate:e.endDate, name:e.eventName, eventType:'personal', color:'#6A4C93'}));
+  return [...confirmed, ...predicted, ...personal];
+}
+function saveEvents(ev) { DB.set('events_confirmed', ev); }
 function migrateStampBoards(boards) {
   return boards.map(b => {
     if (!b.milestones) {
@@ -1178,7 +1245,10 @@ function openAddRecord(date) {
   document.getElementById('rec-zone').value = '';
   document.getElementById('rec-row').innerHTML = '<option value="">-</option>';
   document.getElementById('rec-num').value = '';
-  document.getElementById('rec-price').value = '';
+  const priceEl = document.getElementById('rec-price');
+  priceEl.value = ''; priceEl.setAttribute('readonly',''); priceEl.style.background='var(--bg3)';
+  const manualEl = document.getElementById('rec-price-manual');
+  if (manualEl) manualEl.checked = false;
   document.getElementById('rec-discount-type').value = '';
   document.getElementById('rec-discount-warn').style.display = 'none';
   const paidDiffGroup = document.getElementById('rec-paid-diff-group');
@@ -1217,7 +1287,13 @@ function editRecord(id) {
   document.getElementById('rec-row').value = r.seatRow||'';
   onRowChange();
   document.getElementById('rec-num').value = r.seatNumber||'';
-  document.getElementById('rec-price').value = r.price||'';
+  const priceEl2 = document.getElementById('rec-price');
+  priceEl2.value = r.price||'';
+  if (r.price != null && r.price !== '') {
+    priceEl2.removeAttribute('readonly'); priceEl2.style.background='';
+    const manualEl2 = document.getElementById('rec-price-manual');
+    if (manualEl2) manualEl2.checked = true;
+  }
   document.getElementById('rec-discount-type').value = r.discountType||'';
   document.getElementById('rec-discount-warn').style.display = 'none';
   const paidDiffGroup = document.getElementById('rec-paid-diff-group');
@@ -1461,6 +1537,52 @@ function getSeatRange(zone, row) {
   return null;
 }
 
+function calcAutoPrice() {
+  const priceEl = document.getElementById('rec-price');
+  const manualEl = document.getElementById('rec-price-manual');
+  if (manualEl?.checked) return;
+  const zone   = document.getElementById('rec-zone').value;
+  const row    = document.getElementById('rec-row').value;
+  const dtype  = document.getElementById('rec-discount-type').value;
+  const c1000  = document.getElementById('rec-coupon1000')?.checked;
+  const cNaver = document.getElementById('rec-coupon-naver')?.checked;
+
+  if (!zone) { priceEl.value = ''; return; }
+
+  // 시야제한석(1층 중앙 O행) 자동계산 제외
+  if (zone === '1층 중앙' && row === 'O') { priceEl.value = ''; return; }
+
+  const is2F = zone === '2층';
+  const base = is2F ? 55000 : 70000;
+
+  let price = base;
+  if (dtype === 'preview')   price = is2F ? 35000 : 45000;
+  else if (dtype === 'discount40') price = Math.round(base * 0.6);
+  else if (dtype === 'discount50') price = Math.round(base * 0.5);
+  else if (dtype === 'revisit20')  price = Math.round(base * 0.8);
+
+  price += 2000; // 예매 수수료
+  if (c1000)  price -= 10000;
+  if (cNaver) price -= 2500;
+
+  priceEl.value = Math.max(0, price);
+}
+
+function toggleManualPrice() {
+  const manual  = document.getElementById('rec-price-manual').checked;
+  const priceEl = document.getElementById('rec-price');
+  if (manual) {
+    priceEl.removeAttribute('readonly');
+    priceEl.style.background = '';
+    priceEl.placeholder = '직접 입력';
+  } else {
+    priceEl.setAttribute('readonly', '');
+    priceEl.style.background = 'var(--bg3)';
+    priceEl.placeholder = '좌석 선택 시 자동 계산';
+    calcAutoPrice();
+  }
+}
+
 function onZoneChange() {
   const zone = document.getElementById('rec-zone').value;
   const rowSel = document.getElementById('rec-row');
@@ -1478,17 +1600,19 @@ function onZoneChange() {
   });
   document.getElementById('rec-num').value = '';
   onRowChange();
+  calcAutoPrice();
 }
 
 function onRowChange() {
   const zone = document.getElementById('rec-zone').value;
   const row  = document.getElementById('rec-row').value;
   const numEl = document.getElementById('rec-num');
-  if (!zone||!row) { numEl.min=1; numEl.max=19; numEl.placeholder='번'; return; }
+  if (!zone||!row) { numEl.min=1; numEl.max=19; numEl.placeholder='번'; calcAutoPrice(); return; }
   const sr = getSeatRange(zone, row);
   if (!sr) return;
   numEl.min = sr.start; numEl.max = sr.start+sr.count-1;
   numEl.placeholder = `${sr.start}-${sr.start+sr.count-1}`;
+  calcAutoPrice();
 }
 
 function buildMiniSeat(zone, row, num) {
@@ -1728,6 +1852,8 @@ let calYear, calMonth;
 let calFilterGalileo = null;
 let calFilterKepler  = null;
 let calFilterMaria   = null;
+let calViewMode      = 'all';   // 'all' | 'mine'
+let calEventFilter   = 'all';   // 'all' | 'confirmed' | 'predicted'
 let calSelectedDs = null;
 
 function initCal() {
@@ -1772,8 +1898,31 @@ function updateCalFilterHint() {
     : '· 전체 회차 표시 중';
 }
 
+function getFilteredEvents() {
+  const all = getEvents();
+  return all.filter(e => {
+    if (e.eventType === 'personal') return true; // personal always shown
+    if (calEventFilter === 'all') return true;
+    return e.eventType === calEventFilter;
+  });
+}
+
 function getEventsForDate(ds, events) {
   return events.filter(ev => ev.startDate <= ds && ds <= ev.endDate);
+}
+
+function setCalViewMode(mode, btn) {
+  calViewMode = mode;
+  document.querySelectorAll('#cal-view-btn-all, #cal-view-btn-mine').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCalendar();
+}
+
+function setCalEventFilter(filter, btn) {
+  calEventFilter = filter;
+  document.querySelectorAll('[data-ef]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCalendar();
 }
 
 function applyCalFilterUI() {
@@ -1822,7 +1971,7 @@ function renderCalendar() {
   applyCalFilterUI();
   const records  = getRecords();
   const schedule = getSchedule();
-  const events   = getEvents();
+  const events   = getFilteredEvents();
 
   const schByDate = {};
   schedule.forEach(s => {
@@ -1890,11 +2039,14 @@ function renderCalendar() {
       const ds   = `${monthStr}-${String(day).padStart(2,'0')}`;
       const dow2 = new Date(calYear, calMonth, day).getDay();
       const daySch = schByDate[ds] || [];
-      const filteredDaySch = daySch.filter(s =>
-        (!calFilterGalileo || s.galileo === calFilterGalileo) &&
-        (!calFilterKepler  || s.kepler  === calFilterKepler)  &&
-        (!calFilterMaria   || s.maria   === calFilterMaria)
-      );
+      const filteredDaySch = daySch.filter(s => {
+        const roleMatch = (!calFilterGalileo || s.galileo === calFilterGalileo) &&
+          (!calFilterKepler || s.kepler === calFilterKepler) &&
+          (!calFilterMaria  || s.maria  === calFilterMaria);
+        const viewMatch = calViewMode === 'all' ||
+          doneSet.has(`${ds}-${s.time}`) || bookedSet.has(`${ds}-${s.time}`);
+        return roleMatch && viewMatch;
+      });
 
       let cls = 'cal-day';
       if (ds === todayStr)      cls += ' today';
@@ -2002,6 +2154,21 @@ function renderCalDayPanel(ds, daySch, doneSet, bookedSet, records) {
     html += '<div style="padding:12px 14px;color:var(--text3);font-size:13px;">스케줄 없는 날</div>';
   }
 
+  // 이 날에 걸친 개인 이벤트 기록
+  const evRecs = getMyEventRecords().filter(e => e.startDate <= ds && ds <= e.endDate);
+  if (evRecs.length) {
+    html += `<div style="padding:6px 14px 0;border-top:1px solid var(--border);">`;
+    evRecs.forEach(e => {
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:12px;">
+        <span style="color:#6A4C93;font-weight:600;">🎪 ${e.eventName}</span>
+        <div style="display:flex;gap:6px;">
+          <button style="font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text2);cursor:pointer;" onclick="openAddEventRecord('${e.id}')">수정</button>
+          <button style="font-size:11px;padding:2px 8px;border-radius:6px;border:none;background:none;color:var(--danger);cursor:pointer;" onclick="deleteEventRecord('${e.id}')">삭제</button>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
   html += `<div style="padding:10px 14px 14px;">
     <button class="btn btn-primary btn-sm" style="width:100%;" onclick="openAddRecord('${ds}')">+ 이 날 기록 추가</button>
   </div></div>`;
@@ -2150,22 +2317,26 @@ async function fetchEvents(manual = false) {
   const timeEl   = document.getElementById('event-update-time');
   if (statusEl) statusEl.textContent = '이벤트 불러오는 중...';
   try {
-    const res = await fetch('./events.json?t=' + Date.now());
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (!Array.isArray(data)) throw new Error('형식 오류');
-    saveEvents(data);
+    const t = Date.now();
+    const [r1, r2] = await Promise.all([
+      fetch('./event_confirmed.json?t=' + t),
+      fetch('./event_predicted.json?t=' + t)
+    ]);
+    const confirmed = r1.ok ? await r1.json() : [];
+    const predicted = r2.ok ? await r2.json() : [];
+    if (Array.isArray(confirmed)) saveEventsConfirmed(confirmed);
+    if (Array.isArray(predicted)) saveEventsPredicted(predicted);
+    const total = confirmed.length + predicted.length;
     const now = new Date().toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
     localStorage.setItem('eventsUpdatedAt', now);
     if (timeEl) timeEl.textContent = now;
-    if (statusEl) statusEl.textContent = `✓ ${data.length}개 이벤트 로드됨`;
-    if (manual) showToast(`이벤트 ${data.length}개 업데이트 완료`);
+    if (statusEl) statusEl.textContent = `✓ 공지 ${confirmed.length}개, 예측 ${predicted.length}개 로드됨`;
+    if (manual) showToast(`이벤트 ${total}개 업데이트 완료`);
     renderCalendar();
   } catch (e) {
-    const cached = getEvents();
     const savedAt = localStorage.getItem('eventsUpdatedAt');
     if (timeEl) timeEl.textContent = savedAt ? `${savedAt} (캐시)` : '캐시 없음';
-    if (statusEl) statusEl.textContent = cached.length ? `오프라인 — ${cached.length}개 캐시 사용 중` : '이벤트 없음';
+    if (statusEl) statusEl.textContent = '오프라인 — 캐시 사용 중';
     if (manual) showToast('오프라인 상태입니다');
   }
 }
@@ -2667,6 +2838,54 @@ function addStamp() {
   }
 }
 
+// ============================================================
+// EVENT RECORDS (개인 이벤트 기록)
+// ============================================================
+function openAddEventRecord(id) {
+  const isEdit = !!id;
+  document.getElementById('event-record-panel-title').textContent = isEdit ? '이벤트 기록 수정' : '이벤트 기록 추가';
+  document.getElementById('edit-event-record-id').value = id || '';
+  if (isEdit) {
+    const r = getMyEventRecords().find(x => x.id === id);
+    if (!r) return;
+    document.getElementById('event-rec-name').value  = r.eventName;
+    document.getElementById('event-rec-start').value = r.startDate;
+    document.getElementById('event-rec-end').value   = r.endDate;
+  } else {
+    document.getElementById('event-rec-name').value  = '';
+    document.getElementById('event-rec-start').value = '';
+    document.getElementById('event-rec-end').value   = '';
+  }
+  openPanel('overlay-event-record');
+}
+
+function saveEventRecord() {
+  const eventName  = document.getElementById('event-rec-name').value.trim();
+  const startDate  = document.getElementById('event-rec-start').value;
+  const endDate    = document.getElementById('event-rec-end').value;
+  if (!eventName || !startDate || !endDate) { showToast('이벤트명, 시작일, 종료일은 필수입니다'); return; }
+  if (endDate < startDate) { showToast('종료일이 시작일보다 빠릅니다'); return; }
+  const editId = document.getElementById('edit-event-record-id').value;
+  const records = getMyEventRecords();
+  if (editId) {
+    const idx = records.findIndex(x => x.id === editId);
+    if (idx >= 0) records[idx] = { ...records[idx], eventName, startDate, endDate };
+  } else {
+    records.push({ id: uuid(), eventName, startDate, endDate, createdAt: new Date().toISOString() });
+  }
+  saveMyEventRecords(records);
+  closePanel('overlay-event-record');
+  renderCalendar();
+  showToast(editId ? '이벤트가 수정되었습니다' : '이벤트가 추가되었습니다');
+}
+
+function deleteEventRecord(id) {
+  if (!confirm('이 이벤트 기록을 삭제하시겠습니까?')) return;
+  saveMyEventRecords(getMyEventRecords().filter(x => x.id !== id));
+  renderCalendar();
+  showToast('이벤트가 삭제되었습니다');
+}
+
 // ---- COUPON ----
 
 // 할인권종 → 쿠폰 키 매핑
@@ -2676,7 +2895,9 @@ const DISCOUNT_COUPON_MAP = {
 };
 const DISCOUNT_LABEL = {
   'discount40': '40% 할인권',
-  'discount50': '현장예매 50% 할인권'
+  'discount50': '현장예매 50% 할인권',
+  'preview':    '프리뷰 할인',
+  'revisit20':  '재관람 할인 20%'
 };
 
 function onDiscountTypeChange() {
@@ -2697,6 +2918,7 @@ function onDiscountTypeChange() {
     if (paidDiffEl) paidDiffEl.checked = false;
     warn.style.display = 'none';
   }
+  calcAutoPrice();
 }
 
 function onRecStampBoardChange() {
@@ -3001,12 +3223,14 @@ function applyDark(on) {
 
 function exportData() {
   const data = {
-    records:     getRecords(),
-    schedule:    getSchedule(),
-    events:      getEvents(),
-    stampBoards: getStampBoards(),
-    coupons:     getCoupons(),
-    settings:    getSettings()
+    records:          getRecords(),
+    schedule:         getSchedule(),
+    events_confirmed: getEventsConfirmed(),
+    events_predicted: getEventsPredicted(),
+    event_records:    getMyEventRecords(),
+    stampBoards:      getStampBoards(),
+    coupons:          getCoupons(),
+    settings:         getSettings()
   };
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
@@ -3022,10 +3246,12 @@ function importData(e) {
   reader.onload = ev => {
     try {
       const data = JSON.parse(ev.target.result);
-      if (data.records)     saveRecords(data.records);
-      if (data.schedule)    saveSchedule(data.schedule);
-      if (data.events)      saveEvents(data.events);
-      if (data.stampBoards) saveStampBoards(data.stampBoards);
+      if (data.records)          saveRecords(data.records);
+      if (data.schedule)         saveSchedule(data.schedule);
+      if (data.events_confirmed) saveEventsConfirmed(data.events_confirmed);
+      if (data.events_predicted) saveEventsPredicted(data.events_predicted);
+      if (data.event_records)    saveMyEventRecords(data.event_records);
+      if (data.stampBoards)      saveStampBoards(data.stampBoards);
       if (data.coupons)     saveCoupons(data.coupons);
       if (data.settings)  { saveSettings(data.settings); applyDark(data.settings.darkMode); }
       showToast('데이터를 성공적으로 불러왔습니다');
