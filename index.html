@@ -1878,23 +1878,31 @@ function renderHeatmap() {
     { label:'1층 우측', rows:['A','B','C','D','E','F','G','H','I','J','K','L','M'] },
     { label:'2층',      rows:['P','Q','R','S','T'] }
   ];
-  let html = '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">';
-  zones.forEach(zone => {
-    html += `<div style="display:flex;flex-direction:column;gap:2px;">`;
-    html += `<div style="font-size:10px;font-weight:700;color:var(--text3);text-align:center;margin-bottom:2px;">${zone.label}</div>`;
+  function renderZone(zone) {
+    let z = `<div style="display:flex;flex-direction:column;gap:2px;">`;
+    z += `<div style="font-size:10px;font-weight:700;color:var(--text3);text-align:center;margin-bottom:2px;">${zone.label}</div>`;
     zone.rows.forEach(row => {
       const sr = getSeatRange(zone.label, row);
       if (!sr) return;
-      html += `<div style="display:flex;gap:${GAP}px;align-items:center;">`;
-      html += `<div style="width:${LBL}px;font-size:8px;color:var(--text3);text-align:right;padding-right:2px;flex-shrink:0;">${row}</div>`;
+      z += `<div style="display:flex;gap:${GAP}px;align-items:center;">`;
+      z += `<div style="width:${LBL}px;font-size:8px;color:var(--text3);text-align:right;padding-right:2px;flex-shrink:0;">${row}</div>`;
       for (let n=sr.start; n<sr.start+sr.count; n++) {
         const k=`${zone.label}|${row}|${n}`, cnt=seatMap[k]||0, c=cls(cnt);
-        html += `<div class="seat-cell${c?' '+c:''}" style="width:${C}px;height:${C}px;" title="${zone.label} ${row}열 ${n}번 ${cnt}회"></div>`;
+        z += `<div class="seat-cell${c?' '+c:''}" style="width:${C}px;height:${C}px;" title="${zone.label} ${row}열 ${n}번 ${cnt}회"></div>`;
       }
-      html += '</div>';
+      z += '</div>';
     });
-    html += '</div>';
-  });
+    return z + '</div>';
+  }
+
+  const z1 = zones.find(z=>z.label==='1층 좌측');
+  const z2 = zones.find(z=>z.label==='1층 중앙');
+  const z3 = zones.find(z=>z.label==='1층 우측');
+  const z4 = zones.find(z=>z.label==='2층');
+
+  let html = '<div style="display:flex;flex-direction:column;align-items:center;gap:10px;">';
+  html += `<div style="display:flex;gap:8px;align-items:flex-start;">${renderZone(z1)}${renderZone(z2)}${renderZone(z3)}</div>`;
+  html += `<div>${renderZone(z4)}</div>`;
   html += '</div>';
   document.getElementById('heatmap').innerHTML = html;
 }
