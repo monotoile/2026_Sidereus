@@ -1,10 +1,11 @@
-const CACHE_NAME = 'sidereus2026-v1';
+const CACHE_NAME = 'sidereus2026-v2';
 const BASE = '/2026_Sidereus';
 
 // 앱 시작 시 캐시할 파일들
 const PRECACHE_URLS = [
   BASE + '/',
   BASE + '/index.html',
+  BASE + '/style.css',
   BASE + '/manifest.json',
   BASE + '/icon-192.png',
   BASE + '/icon-512.png',
