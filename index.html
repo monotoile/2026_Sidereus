@@ -334,7 +334,7 @@
         <option value="discount40">40% 할인권</option>
         <option value="discount50">현장예매 50% 할인권</option>
         <option value="preview">프리뷰 할인</option>
-        <option value="revisit20">재관람 할인 20%</option>
+        <option value="revisit25">재관람 할인 25%</option>
       </select>
       <div id="rec-discount-warn" style="display:none;margin-top:6px;font-size:12px;color:var(--danger);">⚠ 현재 보유한 쿠폰이 없습니다</div>
     </div>
@@ -1178,7 +1178,7 @@ function calcAutoPrice() {
   if (dtype === 'preview')   price = is2F ? 35000 : 45000;
   else if (dtype === 'discount40') price = Math.round(base * 0.6);
   else if (dtype === 'discount50') price = Math.round(base * 0.5);
-  else if (dtype === 'revisit20')  price = Math.round(base * 0.8);
+  else if (dtype === 'revisit25')  price = Math.round(base * 0.75);
 
   price += 2000; // 예매 수수료
   if (c1000)  price -= 10000;
@@ -2524,7 +2524,7 @@ const DISCOUNT_LABEL = {
   'discount40': '40% 할인권',
   'discount50': '현장예매 50% 할인권',
   'preview':    '프리뷰 할인',
-  'revisit20':  '재관람 할인 20%'
+  'revisit25':  '재관람 할인 25%'
 };
 
 function onDiscountTypeChange() {
