@@ -1,3 +1,4 @@
 [
-  { "name": "커튼콜 촬영 위크", "startDate": "2026-06-16", "endDate": "2026-06-21", "color": "#5B8FD4" }
+  { "name": "커튼콜 촬영 위크",   "startDate": "2026-06-16", "endDate": "2026-06-21", "color": "#5B8FD4" },
+  { "name": "셀카 포토카드 증정", "startDate": "2026-06-23", "endDate": "2026-06-28", "color": "#B0A0D0" }
 ]
