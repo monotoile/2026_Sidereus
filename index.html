@@ -966,7 +966,8 @@ function saveRecord() {
   const prevCouponKey = DISCOUNT_COUPON_MAP[prevDiscount] || null;
   const couponChanged = discountType !== prevDiscount;
 
-  if (newCouponKey && couponChanged) {
+  const paidDiff = document.getElementById('rec-paid-diff')?.checked || false;
+  if (newCouponKey && couponChanged && !paidDiff) {
     const boards = getStampBoards();
     const coupons = getCoupons();
     const available = calcCouponCount(newCouponKey, coupons, boards, records);
@@ -985,7 +986,7 @@ function saveRecord() {
     seatNumber:   numVal!=='' ? parseInt(numVal) : null,
     price:        priceVal!=='' ? parseInt(priceVal) : null,
     discountType: discountType,
-    paidDiff:     document.getElementById('rec-paid-diff')?.checked||false,
+    paidDiff:     paidDiff,
     coupon1000:   document.getElementById('rec-coupon1000')?.checked||false,
     couponNaver:  document.getElementById('rec-coupon-naver')?.checked||false,
     stampBoardId: stampBoardId || null,
