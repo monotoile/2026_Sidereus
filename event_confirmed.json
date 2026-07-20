@@ -9,8 +9,12 @@
   { "name": "폴라로이드 사진 증정", "startDate": "2026-07-11", "endDate": "2026-07-12", "color": "#60A8D0" },
   { "name": "하이파이브 이벤트", "startDate": "2026-07-15", "endDate": "2026-07-15", "color": "#40B870" },
   { "name": "스페셜 MD 어셔",     "startDate": "2026-07-16", "endDate": "2026-07-16", "color": "#8040B8" },
+  { "name": "커튼콜 촬영 위크",   "startDate": "2026-07-17", "endDate": "2026-07-19", "color": "#5B8FD4" },
   { "name": "스페셜 MD 어셔",     "startDate": "2026-07-18", "endDate": "2026-07-18", "color": "#8040B8" },
   { "name": "스페셜 스테이지",    "startDate": "2026-07-19", "endDate": "2026-07-19", "color": "#C8A030" },
+  { "name": "공연 실황 영상 촬영 안내", "startDate": "2026-07-21", "endDate": "2026-07-21", "color": "#D84040" },
+  { "name": "커튼콜 촬영 위크",   "startDate": "2026-07-22", "endDate": "2026-07-25", "color": "#5B8FD4" },
+  { "name": "마지막 공연 무대인사 (기세중)", "startDate": "2026-07-26", "endDate": "2026-07-26", "color": "#A03050" },
   { "name": "관객과의 대화",      "startDate": "2026-07-28", "endDate": "2026-07-29", "color": "#6090B0" },
   { "name": "전관",               "startDate": "2026-08-05", "endDate": "2026-08-06", "color": "#8060C0" }
 ]
