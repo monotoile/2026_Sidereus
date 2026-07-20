@@ -1842,7 +1842,7 @@ function renderStats() {
   pairs.forEach(([g,k,m]) => {
     const tot  = schedule.filter(x=>x.galileo===g&&x.kepler===k&&x.maria===m).length;
     const seen = records.filter(r=>r.galileo===g&&r.kepler===k&&r.maria===m).length;
-    if (tot>0||seen>0) ph += `<tr><td>${g}</td><td>${k}</td><td>${m}</td><td style="color:var(--text3)">${tot}</td><td>${seen}</td></tr>`;
+    if (seen>0) ph += `<tr><td>${g}</td><td>${k}</td><td>${m}</td><td style="color:var(--text3)">${tot}</td><td>${seen}</td></tr>`;
   });
   if (!ph.includes('<td>')) ph += '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:12px;">기록 없음</td></tr>';
   document.getElementById('stats-pairs').innerHTML = ph;
