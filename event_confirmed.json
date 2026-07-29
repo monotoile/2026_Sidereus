@@ -16,5 +16,11 @@
   { "name": "커튼콜 촬영 위크",   "startDate": "2026-07-22", "endDate": "2026-07-25", "color": "#5B8FD4" },
   { "name": "마지막 공연 무대인사 (기세중)", "startDate": "2026-07-26", "endDate": "2026-07-26", "color": "#A03050" },
   { "name": "관객과의 대화",      "startDate": "2026-07-28", "endDate": "2026-07-29", "color": "#6090B0" },
-  { "name": "전관",               "startDate": "2026-08-05", "endDate": "2026-08-06", "color": "#3CB371" }
+  { "name": "스페셜 커튼콜 위크", "startDate": "2026-07-30", "endDate": "2026-08-09", "color": "#C07030" },
+  { "name": "공연 사진 엽서 증정", "startDate": "2026-08-01", "endDate": "2026-08-02", "color": "#D070A0" },
+  { "name": "전관",               "startDate": "2026-08-05", "endDate": "2026-08-06", "color": "#3CB371" },
+  { "name": "500회 공연 무대인사 (박민성·정휘·유낙원)", "startDate": "2026-08-07", "endDate": "2026-08-07", "color": "#C05070" },
+  { "name": "공연 사진 엽서 증정", "startDate": "2026-08-07", "endDate": "2026-08-09", "color": "#D070A0" },
+  { "name": "공연 사진 엽서 증정", "startDate": "2026-08-11", "endDate": "2026-08-12", "color": "#D070A0" },
+  { "name": "폴라로이드 사진 증정", "startDate": "2026-08-13", "endDate": "2026-08-15", "color": "#60A8D0" }
 ]
